@@ -1,0 +1,107 @@
+<Window 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:AirMaster7pConnect.ViewModels"
+    mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+    x:Class="AirMaster7pConnect.MainWindow"
+    CanResize="False"
+    Width="340"
+    Height="400"
+    Title="AirMaster AM7P Connect">
+    <Window.DataTemplates>
+        <DataTemplate DataType="{x:Type viewModels:MainViewModel}">
+            <StackPanel Margin="8">
+                <TextBlock Text="Wi-Fi SSID" />
+                <TextBox Margin="0,0,0,4" Text="{Binding Ssid}" />
+        
+                <TextBlock Text="Wi-Fi BSSID" />
+                <TextBox Margin="0,0,0,4" Text="{Binding Bssid}" />
+        
+                <TextBlock Text="Wi-Fi Password" />
+                <Grid Margin="0,0,0,8">
+                    <MaskedTextBox 
+                        Name="Password"
+                        RevealPassword="False"
+                        PasswordChar="•"
+                        Text="{Binding Password}" />
+
+                    <ToggleButton
+                        HorizontalAlignment="Right"
+                        Background="Transparent"
+                        IsChecked="{Binding ElementName=Password, Path=RevealPassword}"
+                        Content="👁" />
+                </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Connect AM7P" Margin="0,0,8,0" Command="{Binding Connect}" />
+                    <Button Content="Use Current Connection" Command="{Binding UseCurrentConnection}" />
+                </StackPanel>
+                
+                <ContentControl Content="{Binding Content}" Margin="0,8,0,0" />
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModels:ConnectionViewModel}">
+            <StackPanel>
+                <ProgressBar IsIndeterminate="True" IsVisible="{Binding InProgress}" />
+                <ItemsControl ItemsSource="{Binding Found}" />
+                
+                <Button Margin="0,8,0,0" Content="Listen for data" Command="{Binding Listen}" />
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModels:ListenViewModel}">
+            <StackPanel>
+                <ComboBox Name="DataSelector" ItemsSource="{Binding Datas}" SelectedIndex="0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:DataViewModel}">
+                            <TextBlock Text="{Binding Address}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                
+                <ContentControl
+                    Margin="0,4,0,0"
+                    Content="{Binding ElementName=DataSelector, Path=SelectedItem}" />
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModels:DataViewModel}">
+            <StackPanel>
+                <TextBlock>
+                    <Run Text="Last Update:" />
+                    <Run Text="{Binding LastUpdate, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="PM 2.5:"/>
+                    <Run Text="{Binding PM2d5, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="PM 10:"/>
+                    <Run Text="{Binding PM10, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="HCHO:"/>
+                    <Run Text="{Binding HCHO, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="TVOC:"/>
+                    <Run Text="{Binding TVOC, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="CO2:"/>
+                    <Run Text="{Binding CO2, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Temperature:"/>
+                    <Run Text="{Binding Temperature, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="R. Humidity:"/>
+                    <Run Text="{Binding RelativeHumidity, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </Window.DataTemplates>
+</Window>

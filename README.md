@@ -31,7 +31,7 @@ Once connected to Wi-Fi, you can add sensors to Home Assistant. In the path `hom
 The script can be loaded into Home Assistant via the File editor addon. Add the service calling it in `configuration.yaml`:
 ```yaml
 shell_command:
-  listen_am7p: ``python /config/python_scripts/am7p_receive.py''
+  listen_am7p: 'python /config/python_scripts/am7p_receive.py &'
 ```
 After changing the configuration, you need to restart Home Assistant.
 In automations, you can add a call to this service after startup.

@@ -22,3 +22,16 @@ When the connection is made, the Wi-Fi icon on the Air Master screen lights up y
 The program transmits data for a minute while the running bar is shown. After the time expires the data sending should be restarted.
 
 By pressing the **Listen for data** button you can view the received data from the connected sensors. This mode also works immediately after startup.
+
+
+## Home Assistant Integration
+
+Once connected to Wi-Fi, you can add sensors to Home Assistant. In the path `home-assistant/am7p_receive.py` there is a script to receive sensor data and send it via MQTT to Home Assistant. The MQTT settings, and the names for the sensor by IP are in the script itself, at the beginning.
+
+The script can be loaded into Home Assistant via the File editor addon. Add the service calling it in `configuration.yaml`:
+```yaml
+shell_command:
+  listen_am7p: ``python /config/python_scripts/am7p_receive.py''
+```
+After changing the configuration, you need to restart Home Assistant.
+In automations, you can add a call to this service after startup.

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Sandwych.SmartConfig;
 using Sandwych.SmartConfig.Airkiss;
 
@@ -23,9 +24,11 @@ public class ConnectionViewModel : BaseViewModel, IAsyncDisposable
     }
 
     public ObservableCollection<string> Found { get; } = new();
+    public ICommand ListenCommand { get; }
 
     public ConnectionViewModel(MainViewModel main)
     {
+        ListenCommand = new SimpleCommand(Listen);
         _main = main;
     }
     

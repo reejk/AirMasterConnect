@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using SimpleWifi.Win32;
 
 namespace AirMaster7pConnect.ViewModels;
@@ -34,9 +35,15 @@ public class MainViewModel : BaseViewModel
     }
 
     public object? Content => _content;
-
+    
+    public ICommand UseCurrentConnectionCommand { get; }
+    public ICommand ConnectCommand { get; }
+    
     public MainViewModel()
     {
+        UseCurrentConnectionCommand = new SimpleCommand(UseCurrentConnection);
+        ConnectCommand = new SimpleCommand(Connect);
+        
         UseCurrentConnection();
 
         var vm = new ListenViewModel();

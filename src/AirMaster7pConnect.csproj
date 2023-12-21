@@ -1,24 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
-        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <PublishSingleFile>True</PublishSingleFile>
-        <SelfContained>true</SelfContained>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <UseWpf>true</UseWpf>
+        <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5"/>
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5"/>
         <PackageReference Include="Sandwych.SmartConfig" Version="1.1.0.30" />
         <PackageReference Include="SimpleWifi.netstandard" Version="2.0.0" />
     </ItemGroup>

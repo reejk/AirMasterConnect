@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace AirMaster7pConnect.ViewModels;
 
@@ -19,5 +21,25 @@ public abstract class BaseViewModel : INotifyPropertyChanged
         field = value;
         OnPropertyChanged(propertyName);
         return true;
+    }
+}
+
+public sealed class SimpleCommand : ICommand
+{
+    public readonly Action _execute;
+
+    public SimpleCommand(Action execute)
+    {
+        ArgumentNullException.ThrowIfNull(execute);
+        _execute = execute;
+    }
+
+    public bool CanExecute(object? parameter) => true;
+    public void Execute(object? parameter) => _execute();
+
+    public event EventHandler? CanExecuteChanged
+    {
+        add {}
+        remove {}
     }
 }

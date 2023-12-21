@@ -1,8 +1,6 @@
-using Avalonia.Controls;
-
 namespace AirMaster7pConnect;
 
-public partial class MainWindow : Window
+public partial class MainWindow
 {
     public MainWindow()
     {

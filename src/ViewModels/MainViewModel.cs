@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+#if IS_WINDOWS
 using SimpleWifi.Win32;
+#endif
 
 namespace AirMaster7pConnect.ViewModels;
 
@@ -52,7 +56,7 @@ public class MainViewModel : BaseViewModel
 
         return ValueTask.CompletedTask;
     }
-    
+
     public async void Connect()
     {
         if (!PhysicalAddress.TryParse(Bssid.Replace(':', '-'), out var bssid))
@@ -60,20 +64,20 @@ public class MainViewModel : BaseViewModel
             await SetContentAsync("BSSID format invalid (example: 01:02:03:04:05:06)");
             return;
         }
-        
+
         var wifiInterface = GetWifiInterface();
         if (wifiInterface == null)
         {
             await SetContentAsync("Cannot find any available WiFi adapter");
             return;
         }
-        
+
         var localAddress = wifiInterface.GetIPProperties()
             .UnicastAddresses
             .Where(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
             .Select(x => x.Address)
             .FirstOrDefault();
-        
+
         if(localAddress == null)
         {
             await SetContentAsync($"Cannot find IPv4 address for WiFi interface: {wifiInterface.Name}");
@@ -87,13 +91,50 @@ public class MainViewModel : BaseViewModel
 
     public async void UseCurrentConnection()
     {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            await UseCurrentConnectionMacOS();
+        else
+            await UseCurrentConnectionWindows();
+    }
+
+    private async Task UseCurrentConnectionMacOS()
+    {
+        try
+        {
+            var process = new Process();
+            process.StartInfo.FileName = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport";
+            process.StartInfo.Arguments = "-I";
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.Start();
+            var output = await process.StandardOutput.ReadToEndAsync();
+            await process.WaitForExitAsync();
+
+            foreach (var line in output.Split('\n'))
+            {
+                var trimmed = line.Trim();
+                if (trimmed.StartsWith("SSID:"))
+                    Ssid = trimmed.Substring(5).Trim();
+                else if (trimmed.StartsWith("BSSID:"))
+                    Bssid = trimmed.Substring(6).Trim();
+            }
+        }
+        catch
+        {
+            await SetContentAsync("Could not detect WiFi. Fill in fields manually.");
+        }
+    }
+
+    private async Task UseCurrentConnectionWindows()
+    {
+#if IS_WINDOWS
         var wifiInterface = GetWifiInterface();
         if (wifiInterface == null)
         {
             await SetContentAsync("Cannot find any available WiFi adapter");
             return;
         }
-        
+
         var wlan = new WlanClient();
         foreach (var wifi in wlan.Interfaces)
         {
@@ -110,6 +151,9 @@ public class MainViewModel : BaseViewModel
 
         if (Content is string)
             await SetContentAsync(null);
+#else
+        await SetContentAsync("WiFi detection is not supported on this platform. Fill in fields manually.");
+#endif
     }
 
     private static NetworkInterface? GetWifiInterface()
